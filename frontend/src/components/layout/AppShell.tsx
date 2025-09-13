@@ -1,46 +1,45 @@
-"use client"
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { PropsWithChildren } from 'react'
-import { clsx } from 'clsx'
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { PropsWithChildren } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 const nav = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/watchers', label: 'Watchers' },
-  { href: '/record', label: 'Record Now' },
-  { href: '/jobs', label: 'Jobs' },
-  { href: '/files', label: 'Files' },
-  { href: '/settings', label: 'Settings' },
-]
+  { href: "/", label: "Dashboard" },
+  { href: "/watchers", label: "Watchers" },
+  { href: "/record", label: "Record Now" },
+  { href: "/jobs", label: "Jobs" },
+  { href: "/files", label: "Files" },
+  { href: "/settings", label: "Settings" },
+];
 
 export default function AppShell({ children }: PropsWithChildren) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div className="min-h-screen grid grid-cols-[240px_1fr]">
-      <aside className="border-r border-gray-200 p-4">
-        <div className="font-semibold text-lg mb-4">TikTok Live Recorder</div>
-        <nav className="flex flex-col gap-1">
-          {nav.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className={clsx(
-                'rounded-md px-3 py-2 text-sm hover:bg-gray-100',
-                pathname === n.href ? 'bg-gray-100 font-medium' : 'text-gray-700'
-              )}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-      </aside>
-      <main className="p-6">
-        <div className="container">
-          {children}
+      <Card className="rounded-none border-t-0 border-l-0 border-b-0">
+        <div className="p-4">
+          <div className="font-semibold text-lg mb-4">TikTok Live Recorder</div>
+          <nav className="flex flex-col gap-1">
+            {nav.map((n) => (
+              <Button
+                key={n.href}
+                asChild
+                variant={pathname === n.href ? "default" : "ghost"}
+                className="justify-start"
+              >
+                <Link href={n.href}>{n.label}</Link>
+              </Button>
+            ))}
+          </nav>
         </div>
+      </Card>
+      <main className="p-6">
+        <div className="container max-w-none">{children}</div>
       </main>
     </div>
-  )
+  );
 }
-

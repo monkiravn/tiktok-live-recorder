@@ -16,9 +16,10 @@ RUN npm run build || (npm i -g pnpm@9 && pnpm i && pnpm build)
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/.next ./.next
+# Copy standalone server and assets
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY package.json .
 EXPOSE 3000
-CMD ["npx", "next", "start", "-p", "3000"]
-
+ENV PORT=3000
+CMD ["node", "server.js"]
