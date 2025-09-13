@@ -17,8 +17,8 @@ services:
 
   api:
     build:
-      context: .
-      dockerfile: Dockerfile.api
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
@@ -51,8 +51,8 @@ services:
 
   worker:
     build:
-      context: .
-      dockerfile: Dockerfile.api
+      context: ./backend
+      dockerfile: Dockerfile
     command:
       [
         "celery",
@@ -92,8 +92,8 @@ services:
 
   flower:
     build:
-      context: .
-      dockerfile: Dockerfile.api
+      context: ./backend
+      dockerfile: Dockerfile
     command:
       [
         "celery",
