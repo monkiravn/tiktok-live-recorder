@@ -101,8 +101,32 @@ $ python main.py -h
 
 <div align="left">
 
-## Docker
-ToDo
+## Docker / API Service
+
+Run the API + worker + Redis locally using Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Then:
+- API: http://localhost:8000/docs
+- Flower (Celery monitor): http://localhost:5555
+
+Example request (replace API key if changed):
+
+```bash
+curl -X POST http://localhost:8000/recordings \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: dev-key" \
+  -d '{"url": "https://www.tiktok.com/@user/live", "duration": 120}'
+```
+
+Query job status:
+
+```bash
+curl -H "X-API-Key: dev-key" http://localhost:8000/jobs/<task_id>
+```
 
 ## Guide
 
