@@ -10,8 +10,8 @@ import time
 from typing import Optional, Tuple, List
 import psutil
 
-from .logging_config import get_logger
-from .exceptions import ErrorCode, RecordingException
+from backend.utils.logging import get_logger
+from backend.core.exceptions import ErrorCode, RecordingException
 
 
 logger = get_logger(__name__)

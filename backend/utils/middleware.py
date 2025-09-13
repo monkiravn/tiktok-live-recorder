@@ -8,14 +8,14 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
-from .logging_config import (
+from .logging import (
     generate_correlation_id,
     set_correlation_id,
     get_correlation_id,
     clear_context,
     get_logger,
 )
-from .exceptions import TLRAPIException, ErrorCode
+from backend.core.exceptions import TLRAPIException, ErrorCode
 
 
 logger = get_logger(__name__)

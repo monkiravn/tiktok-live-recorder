@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   redis:
     image: redis:7-alpine
@@ -17,8 +15,8 @@ services:
 
   api:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
@@ -51,13 +49,13 @@ services:
 
   worker:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     command:
       [
         "celery",
         "-A",
-        "service.celery_app.celery",
+        "backend.core.celery_app.celery",
         "worker",
         "-Q",
         "default,recording",
@@ -85,22 +83,28 @@ services:
     restart: unless-stopped
     healthcheck:
       test:
-        ["CMD", "celery", "-A", "service.celery_app.celery", "inspect", "ping"]
+        [
+          "CMD",
+          "celery",
+          "-A",
+          "backend.core.celery_app.celery",
+          "inspect",
+          "ping",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
 
   flower:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     command:
       [
         "celery",
         "-A",
-        "service.celery_app.celery",
+        "backend.core.celery_app.celery",
         "flower",
-        "--broker=redis://redis:6379/0",
         "--port=5555",
       ]
     environment:
@@ -124,7 +128,7 @@ services:
   #   command:
   #     - '--config.file=/etc/prometheus/prometheus.yml'
   #     - '--storage.tsdb.path=/prometheus'
-  
+
   frontend:
     build:
       context: ./frontend

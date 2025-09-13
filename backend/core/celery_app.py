@@ -18,7 +18,7 @@ def _create_celery() -> Celery:
         "tlr_service",
         broker=settings.CELERY_BROKER_URL,
         backend=settings.CELERY_RESULT_BACKEND,
-        include=["service.tasks"],
+        include=["backend.tasks.recording_tasks", "backend.tasks.watcher_tasks"],
     )
 
     app.conf.task_queues = (
@@ -38,4 +38,3 @@ def _create_celery() -> Celery:
 
 
 celery = _create_celery()
-

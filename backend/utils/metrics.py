@@ -15,9 +15,9 @@ from prometheus_client import (
     generate_latest,
 )
 
-from .config import get_settings
-from .storage import RedisStorage
-from .logging_config import get_logger
+from backend.core.config import get_settings
+from backend.services.storage import RedisStorage
+from backend.utils.logging import get_logger
 
 
 logger = get_logger(__name__)
@@ -147,7 +147,7 @@ class MetricsCollector:
     def update_file_metrics(self):
         """Update recording file metrics."""
         try:
-            from .utils import list_recording_files
+            from backend.utils.helpers import list_recording_files
 
             files = list_recording_files(self.settings.RECORDINGS_DIR)
             recording_files_total.set(len(files))

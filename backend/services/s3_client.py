@@ -12,9 +12,9 @@ import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 from botocore.config import Config
 
-from .config import get_settings
-from .logging_config import get_logger
-from .exceptions import StorageException, ErrorCode
+from backend.core.config import get_settings
+from backend.utils.logging import get_logger
+from backend.core.exceptions import StorageException, ErrorCode
 
 
 logger = get_logger(__name__)

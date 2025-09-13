@@ -2,7 +2,7 @@ FROM python:3.11-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app:/app/backend
 
 # Create non-root user for security
 RUN groupadd --gid 1000 appuser && \
@@ -18,16 +18,21 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install CLI deps
+# Copy requirements files first (for better layer caching)
+COPY backend/requirements.txt /app/backend/requirements.txt
 COPY src/requirements.txt /app/src/requirements.txt
+
+# Install API deps first
+RUN pip install --no-cache-dir -r /app/backend/requirements.txt
+
+# Install CLI deps
 RUN pip install --no-cache-dir -r /app/src/requirements.txt
 
-# Install API deps  
-COPY service/requirements.txt /app/service/requirements.txt
-RUN pip install --no-cache-dir -r /app/service/requirements.txt
+# Copy backend source
+COPY backend/ /app/backend/
 
-# Copy source
-COPY . /app
+# Copy src directory
+COPY src/ /app/src/
 
 # Create recordings directory and set permissions
 RUN mkdir -p /recordings && \
@@ -47,5 +52,5 @@ EXPOSE 8000 5555
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/healthz || exit 1
 
-CMD ["uvicorn", "service.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
 

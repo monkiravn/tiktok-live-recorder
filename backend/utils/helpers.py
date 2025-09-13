@@ -3,10 +3,11 @@ from __future__ import annotations
 import os
 import sys
 import time
+import json
 from datetime import datetime
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from .config import get_settings
+from backend.core.config import get_settings
 
 
 def ensure_tlr_on_path():
@@ -69,8 +70,6 @@ def resolve_user_room(
 def load_cookies_from_path(path: Optional[str]) -> Optional[dict]:
     if not path:
         return None
-    import json
-
     with open(path, "r") as f:
         return json.load(f)
 
@@ -91,8 +90,8 @@ def run_recording(
     ensure_tlr_on_path()
     from core.tiktok_recorder import TikTokRecorder
     from utils.enums import Mode
-    from .process_manager import ProcessManager
-    from .logging_config import get_logger
+    from backend.services.process_manager import ProcessManager
+    from backend.utils.logging import get_logger
 
     logger = get_logger(__name__)
 
