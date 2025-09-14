@@ -43,20 +43,20 @@ docker run -p 6379:6379 redis:7-alpine
 
 ```bash
 # Terminal 1: API
-uvicorn service.app:app --reload --port 8000
+uvicorn backend.app:app --reload --port 8000
 
 # Terminal 2: Worker
-celery -A service.celery_app.celery worker -Q default,recording -l info --concurrency 1
+celery -A backend.core.celery_app.celery worker -Q default,recording -l info --concurrency 1
 
 # Terminal 3: Flower
-celery -A service.celery_app.celery flower --broker=redis://localhost:6379/0 --port=5555
+celery -A backend.core.celery_app.celery flower --broker=redis://localhost:6379/0 --port=5555
 ```
 
 ## 🧪 Running Tests
 
 ```bash
 # Install test dependencies
-pip install -r service/requirements.txt
+pip install -r backend/requirements.txt
 
 # Run tests with coverage
 ./run_tests.sh

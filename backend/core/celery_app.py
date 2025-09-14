@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 from celery import Celery
 from kombu import Queue
 
@@ -33,6 +34,15 @@ def _create_celery() -> Celery:
     app.conf.broker_heartbeat = 10
     app.conf.worker_prefetch_multiplier = 1
     app.conf.task_time_limit = 60 * 60 * 8  # 8h hard limit
+    
+    # Windows-specific configuration to avoid billiard permission errors
+    if sys.platform == "win32":
+        # Use solo pool instead of multiprocessing on Windows (single-threaded but stable)
+        app.conf.worker_pool = "solo"
+        # Disable worker process recycling on Windows 
+        app.conf.worker_max_tasks_per_child = None
+        # Alternative: Use eventlet pool (requires eventlet package)
+        # app.conf.worker_pool = "eventlet"
 
     return app
 

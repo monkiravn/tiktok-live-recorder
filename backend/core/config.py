@@ -18,7 +18,7 @@ class Settings:
     )
 
     # Paths
-    BASE_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    BASE_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     TLR_ROOT: str = os.environ.get("TLR_ROOT", os.path.join(BASE_DIR, "src"))
     RECORDINGS_DIR: str = os.environ.get(
         "RECORDINGS_DIR", os.path.join(BASE_DIR, "recordings")

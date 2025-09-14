@@ -10,17 +10,16 @@ from backend.models.responses import JobRef
 
 
 router = APIRouter()
+limiter = get_limiter()
 
 
 @router.post("/recordings", response_model=JobRef)
+@limiter.limit(f"{get_settings().RATE_LIMIT_PER_MIN}/minute")
 def create_recording(
     request: Request,
     req: CreateRecordingRequest,
     api_key: str = Depends(api_key_auth),
-    limiter: Limiter = Depends(get_limiter),
 ):
-    # Apply rate limiting
-    limiter.limit(f"{get_settings().RATE_LIMIT_PER_MIN}/minute")(request)
 
     if not req.room_id and not req.url:
         raise HTTPException(status_code=400, detail="Provide at least room_id or url")
