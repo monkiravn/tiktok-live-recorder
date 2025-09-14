@@ -4,7 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { api, type CreateRecordingRequest } from "@/lib/api";
+import { api } from "@/lib/api";
+import type { CreateRecordingRequest } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +40,7 @@ export default function RecordNowPage() {
 
   const recordMutation = useMutation({
     mutationFn: async (payload: CreateRecordingRequest) => {
-      return await api.createRecording(payload);
+      return await api.recordings.create(payload);
     },
     onSuccess: (result) => {
       toast({

@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, type CreateWatcherRequest } from "@/lib/api";
+import { api } from "@/lib/api";
+import type { CreateWatcherRequest } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,7 @@ export default function WatchersPage() {
 
   const createMutation = useMutation({
     mutationFn: async (payload: CreateWatcherRequest) => {
-      const result = await api.createWatcher(payload);
+      const result = await api.watchers.create(payload);
       return result;
     },
     onSuccess: () => {
@@ -75,7 +76,7 @@ export default function WatchersPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (key: string) => {
-      return await api.deleteWatcher(key);
+      return await api.watchers.delete(key);
     },
     onSuccess: () => {
       toast({ title: "Watcher deleted successfully" });
@@ -97,10 +98,6 @@ export default function WatchersPage() {
       room_id: values.room_id || undefined,
       url: values.url || undefined,
       poll_interval: values.poll_interval,
-      options: {
-        proxy: values.proxy || undefined,
-        cookies: values.cookies || undefined,
-      },
     };
     createMutation.mutate(payload);
   };

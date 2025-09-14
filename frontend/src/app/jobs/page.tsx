@@ -2,7 +2,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Link from "next/link";
-import { api, type JobsQuery } from "@/lib/api";
+import { api } from "@/lib/api";
+import type { JobList, Job } from "@/lib/types";
+
+interface JobsQuery {
+  page: number;
+  page_size: number;
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,7 +131,7 @@ export default function JobsPage() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["jobs", filters],
-    queryFn: () => api.listJobs(filters),
+    queryFn: () => api.jobs.list(),
     refetchInterval: 5000, // Refresh every 5 seconds
   });
 
@@ -209,8 +215,8 @@ export default function JobsPage() {
                 <TableBody>
                   {isLoading ? (
                     <LoadingRows />
-                  ) : data?.items.length ? (
-                    data.items.map((job) => (
+                  ) : data?.jobs.length ? (
+                    data.jobs.map((job: Job) => (
                       <JobRow key={job.task_id} job={job} />
                     ))
                   ) : (
@@ -234,8 +240,8 @@ export default function JobsPage() {
               {data && data.total > 0 && (
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    Showing {(data.page - 1) * data.page_size + 1} to{" "}
-                    {Math.min(data.page * data.page_size, data.total)} of{" "}
+                    Showing {(data.page - 1) * data.limit + 1} to{" "}
+                    {Math.min(data.page * data.limit, data.total)} of{" "}
                     {data.total} results
                   </p>
                   <div className="flex gap-2">
@@ -250,7 +256,7 @@ export default function JobsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={data.page * data.page_size >= data.total}
+                      disabled={data.page * data.limit >= data.total}
                       onClick={() => handlePageChange(data.page + 1)}
                     >
                       Next

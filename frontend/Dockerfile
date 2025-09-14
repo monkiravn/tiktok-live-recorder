@@ -11,7 +11,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build || (npm i -g pnpm@9 && pnpm i && pnpm build)
+# Clean up any conflicting package manager files and use npm for consistency
+RUN rm -rf node_modules/.pnpm && \
+    rm -rf node_modules/.ignored && \
+    npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app

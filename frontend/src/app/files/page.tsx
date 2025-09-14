@@ -3,6 +3,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { formatBytes } from "@/lib/utils";
+import type { RecordingFile } from "@/lib/types";
 import { Suspense, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,17 +35,17 @@ function FilesView() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["files", { page, page_size, room_id, url }],
     queryFn: () =>
-      api.listFiles({
-        page,
-        page_size,
+      api.files.list({
         room_id: room_id || undefined,
         url: url || undefined,
+        page,
+        limit: page_size,
       }),
     placeholderData: keepPreviousData,
   });
 
   const totalPages = useMemo(
-    () => (data ? Math.max(1, Math.ceil(data.total / data.page_size)) : 1),
+    () => (data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1),
     [data]
   );
 
@@ -185,22 +186,22 @@ function FilesView() {
               <TableBody>
                 {isLoading ? (
                   <LoadingRows />
-                ) : data?.items?.length ? (
-                  data.items.map((item) => (
-                    <TableRow key={item.path}>
+                ) : data?.files?.length ? (
+                  data.files.map((item: RecordingFile) => (
+                    <TableRow key={item.file_path}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <File className="h-4 w-4 text-muted-foreground" />
-                          <span className="break-all">{item.name}</span>
+                          <span className="break-all">{item.filename}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{formatBytes(item.size)}</TableCell>
+                      <TableCell>{formatBytes(item.file_size)}</TableCell>
                       <TableCell>
-                        {new Date(item.mtime * 1000).toLocaleString()}
+                        {new Date(item.created_at).toLocaleString()}
                       </TableCell>
                       <TableCell>
                         <code className="text-xs bg-muted rounded px-2 py-1 break-all">
-                          {item.path}
+                          {item.file_path}
                         </code>
                       </TableCell>
                       <TableCell>
@@ -208,7 +209,7 @@ function FilesView() {
                           variant="ghost"
                           size="sm"
                           onClick={() =>
-                            copyToClipboard(item.path, "File path")
+                            copyToClipboard(item.file_path, "File path")
                           }
                           className="h-8 w-8 p-0"
                         >
@@ -241,8 +242,8 @@ function FilesView() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                Showing {(data.page - 1) * data.page_size + 1} to{" "}
-                {Math.min(data.page * data.page_size, data.total)} of{" "}
+                Showing {(data.page - 1) * data.limit + 1} to{" "}
+                {Math.min(data.page * data.limit, data.total)} of{" "}
                 {data.total} files
               </p>
               <div className="flex gap-2">

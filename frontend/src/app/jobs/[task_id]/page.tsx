@@ -3,7 +3,8 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { api, type JobStatusResponse } from "@/lib/api";
+import { api } from "@/lib/api";
+import type { Job } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,7 @@ export default function JobDetailPage() {
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["job", taskId],
-    queryFn: () => api.jobStatus(taskId),
+    queryFn: () => api.jobs.get(taskId as string),
     refetchInterval: 3000,
   });
 
@@ -230,7 +231,7 @@ export default function JobDetailPage() {
                 <p className="text-muted-foreground">No files generated</p>
               ) : (
                 <div className="space-y-2">
-                  {data.result.files.map((filePath, index) => (
+                  {data.result.files.map((filePath: string, index: number) => (
                     <div
                       key={index}
                       className="flex items-center justify-between p-3 bg-muted rounded-md"
@@ -257,7 +258,7 @@ export default function JobDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {data.result.s3.map((s3Info, index) => (
+                  {data.result.s3.map((s3Info: any, index: number) => (
                     <div key={index} className="p-3 bg-muted rounded-md">
                       <pre className="text-sm">
                         {JSON.stringify(s3Info, null, 2)}
