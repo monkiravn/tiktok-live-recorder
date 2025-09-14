@@ -6,7 +6,7 @@
       "dom.iterable",
       "es2022"
     ],
-    "allowJs": false,
+    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -27,10 +27,13 @@
       "@/*": [
         "src/*"
       ]
-    }
+    },
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "next-env.d.ts",
+    "src/types/global.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
